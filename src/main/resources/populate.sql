@@ -4,8 +4,12 @@ use mid_term_project;
 -- PRELOAD USERS
 INSERT INTO admin (id, name, password, role) VALUES (1, 'jorge', '$2a$10$en0dAnBZn.gHxE1lZm5dS.wJ2h8ArJqF7hWN7yoMvSYAwoa2y/9LC', 'ADMIN');
 INSERT INTO admin (id, name, password, role) VALUES (2, 'johnnie', '$2a$10$en0dAnBZn.gHxE1lZm5dS.wJ2h8ArJqF7hWN7yoMvSYAwoa2y/9LC', 'ADMIN');
-INSERT INTO account_holder (id, name, password, role, birth_date, city, country, postal_code, street) VALUES (3, 'javier', '$2a$10$en0dAnBZn.gHxE1lZm5dS.wJ2h8ArJqF7hWN7yoMvSYAwoa2y/9LC', 'ACCOUNT_HOLDER', '1990-10-12', 'springfield', 'usa', 123, 'fake');
-INSERT INTO account_holder (id, name, password, role, birth_date, city, country, postal_code, street) VALUES (4, 'jimmy', '$2a$10$en0dAnBZn.gHxE1lZm5dS.wJ2h8ArJqF7hWN7yoMvSYAwoa2y/9LC', 'ACCOUNT_HOLDER', '1999-12-10', 'shelbyville', 'usa', 321, 'truth');
+
+INSERT INTO account_holder (id, name, password, role, birth_date, city, country, postal_code, street) VALUES
+(3, 'javier', '$2a$10$en0dAnBZn.gHxE1lZm5dS.wJ2h8ArJqF7hWN7yoMvSYAwoa2y/9LC', 'ACCOUNT_HOLDER', '1990-10-12', 'springfield', 'usa', 123, 'fake');
+INSERT INTO account_holder (id, name, password, role, birth_date, city, country, postal_code, street) VALUES
+(4, 'jimmy', '$2a$10$en0dAnBZn.gHxE1lZm5dS.wJ2h8ArJqF7hWN7yoMvSYAwoa2y/9LC', 'ACCOUNT_HOLDER', '1999-12-10', 'shelbyville', 'usa', 321, 'truth');
+
 INSERT INTO third_party (id, name, password, role, hashed_key) VALUES (5, 'BBVA', '$2a$10$en0dAnBZn.gHxE1lZm5dS.wJ2h8ArJqF7hWN7yoMvSYAwoa2y/9LC', 'THIRD_PARTY', '$2a$10$en0dAnBZn.gHxE1lZm5dS.wJ2h8ArJqF7hWN7yoMvSYAwoa2y/9LC');
 INSERT INTO third_party (id, name, password, role, hashed_key) VALUES (6, 'Sabadell', '$2a$10$en0dAnBZn.gHxE1lZm5dS.wJ2h8ArJqF7hWN7yoMvSYAwoa2y/9LC', 'THIRD_PARTY', '$2a$10$en0dAnBZn.gHxE1lZm5dS.wJ2h8ArJqF7hWN7yoMvSYAwoa2y/9LC');
 

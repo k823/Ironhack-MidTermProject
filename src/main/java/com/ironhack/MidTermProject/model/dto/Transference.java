@@ -5,11 +5,14 @@ import java.math.BigDecimal;
 public class Transference {
     private Long senderId;
     private Long receiverId;
+    private String receiverName;
     private BigDecimal amount;
 
-    public Transference(Long senderId, Long receiverId, BigDecimal amount) {
+    public Transference(){}
+    public Transference(Long senderId, Long receiverId, String receiverName, BigDecimal amount) {
         this.senderId = senderId;
         this.receiverId = receiverId;
+        this.receiverName = receiverName;
         this.amount = amount;
     }
 
@@ -27,6 +30,14 @@ public class Transference {
 
     public void setReceiverId(Long receiverId) {
         this.receiverId = receiverId;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
     }
 
     public BigDecimal getAmount() {

@@ -5,23 +5,28 @@ import com.ironhack.MidTermProject.model.classes.User;
 import com.ironhack.MidTermProject.service.Users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/users")
 public class UserControllerImpl implements UserControllerInterface {
 
     @Autowired
     UserService userService;
 
-    @GetMapping("/users")
+    @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
     public List<User> getAll() {
         return userService.getAll();
     }
+
+    @GetMapping("/find/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public User findById(@PathVariable Long id) {
+        return userService.findById(id);
+    }
+
+
 }

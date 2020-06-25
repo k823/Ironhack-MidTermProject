@@ -54,8 +54,11 @@ public class ThirdParty extends User {
     @Override
     public String toString() {
         return "ThirdParty{" +
-                ", hashedKey='" + hashedKey + '\'' +
+                "hashedKey='" + hashedKey + '\'' +
+                ", id=" + id +
                 ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
                 '}';
     }
 }

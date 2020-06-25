@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
-@Entity(name = "Account")
+@Entity(name = "account")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Account {
     @Id
@@ -28,7 +28,9 @@ public abstract class Account {
     @Enumerated(EnumType.STRING)
     protected AccountType accountType;
     @Enumerated(EnumType.STRING)
-    private AccountStatus status;
+    protected AccountStatus status;
+    protected Integer maxTransactions24Hrs;
+    protected Integer maxTransactionsToday;
     protected LocalDate createdAt;
     protected LocalDate updatedAt;
 
@@ -45,6 +47,8 @@ public abstract class Account {
         this.balance = new Money(new BigDecimal(0));
         this.status = AccountStatus.ACTIVE;
         this.accountType = accountType;
+        this.maxTransactions24Hrs = 0;
+        this.maxTransactionsToday = 0;
         this.createdAt = LocalDate.now();
         this.updatedAt = LocalDate.now();
     }
@@ -74,6 +78,10 @@ public abstract class Account {
 
     public void setBalance(Money balance) {
         this.balance = balance;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = new Money(balance);
     }
 
     public String getSecretKey() {
@@ -134,6 +142,22 @@ public abstract class Account {
 
     public void setStatus(AccountStatus status) {
         this.status = status;
+    }
+
+    public Integer getMaxTransactions24Hrs() {
+        return maxTransactions24Hrs;
+    }
+
+    public void setMaxTransactions24Hrs(Integer maxTransactions24Hrs) {
+        this.maxTransactions24Hrs = maxTransactions24Hrs;
+    }
+
+    public Integer getMaxTransactionsToday() {
+        return maxTransactionsToday;
+    }
+
+    public void setMaxTransactionsToday(Integer maxTransactionsToday) {
+        this.maxTransactionsToday = maxTransactionsToday;
     }
 
     @Override
