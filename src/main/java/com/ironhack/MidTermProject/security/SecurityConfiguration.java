@@ -45,6 +45,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("*").hasAuthority("ADMIN")
                 .mvcMatchers(HttpMethod.GET,"/accounts/mine").hasAuthority("ACCOUNT_HOLDER")
                 .mvcMatchers(HttpMethod.POST,"/transference/*").hasAuthority("ACCOUNT_HOLDER")
+                .mvcMatchers(HttpMethod.POST,"/transference/third-party/*").hasAuthority("THIRD_PARTY")
                 .and().requestCache().requestCache(new NullRequestCache()).and().httpBasic().and().cors().and().csrf().disable();
 
 

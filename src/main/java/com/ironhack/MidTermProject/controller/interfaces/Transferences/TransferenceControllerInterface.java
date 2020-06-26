@@ -7,6 +7,5 @@ import java.util.List;
 public interface TransferenceControllerInterface {
     public List<TransferenceRegistry> getAll();
     public TransferenceRegistry findById(Long id);
-    public TransferenceRegistry createTransferenceRegistry(TransferenceRegistry transferenceRegistry);
     public void deleteTransferenceRegistryById(Long id);
 }

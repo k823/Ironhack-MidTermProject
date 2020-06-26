@@ -4,10 +4,13 @@ import com.ironhack.MidTermProject.exception.DataNotFoundException;
 import com.ironhack.MidTermProject.model.classes.Account;
 import com.ironhack.MidTermProject.model.classes.User;
 import com.ironhack.MidTermProject.model.dto.AccountMoney;
+import com.ironhack.MidTermProject.model.dto.ThirdPartyAccess;
 import com.ironhack.MidTermProject.model.dto.Transference;
 import com.ironhack.MidTermProject.model.entities.Transferences.TransferenceRegistry;
+import com.ironhack.MidTermProject.model.entities.Users.ThirdParty;
 import com.ironhack.MidTermProject.model.enums.AccountStatus;
 import com.ironhack.MidTermProject.repository.Accounts.AccountRepository;
+import com.ironhack.MidTermProject.repository.Users.ThirdPartyRepository;
 import com.ironhack.MidTermProject.repository.Users.UserRepository;
 import com.ironhack.MidTermProject.service.Transferences.TransferenceRegistryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Base64;
 import java.util.List;
@@ -29,6 +33,9 @@ public class AccountService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    ThirdPartyRepository thirdPartyRepository;
 
     @Autowired
     TransferenceRegistryService transferenceRegistryService;
@@ -67,10 +74,53 @@ public class AccountService {
         return targetList.get(0);
     }
 
+    // FOR ADMINS
     public void setBalance(AccountMoney accountMoney) throws Exception {
         Account targetAccount = accountRepository.findById(accountMoney.getAccountId()).orElseThrow(() -> new Exception("Account not found."));
         targetAccount.setBalance(targetAccount.getBalance().increaseAmount(accountMoney.getAmount()));
         accountRepository.save(targetAccount);
+        TransferenceRegistry record = new TransferenceRegistry(
+                null,
+                "ADMIN OPERATION",
+                null,
+                targetAccount.getId(),
+                targetAccount.getPrimaryOwner().getName(),
+                targetAccount.getBalance().getAmount(),
+                accountMoney.getAmount());
+
+        transferenceRegistryService.createTransferenceRegistry(record);
+    }
+
+    // FOR THIRD PARTIES
+    public void operateAccount(String hashedKey, ThirdPartyAccess thirdPartyAccess) throws Exception {
+        if (thirdPartyAccess.getAccountSecretKey() == null
+                || thirdPartyAccess.getAccountId() == null
+                || thirdPartyAccess.getAmount() == null) {
+            throw new Exception("Please introduce all the required fields: accountId,  amount, accountSecretKey");
+        }
+        List<ThirdParty> thirdParties = thirdPartyRepository.findByHashedKey(hashedKey);
+        if (thirdParties.size() > 0) {
+            Account targetAccount = accountRepository.findById(thirdPartyAccess.getAccountId()).orElseThrow(() -> new Exception("Account not found."));
+
+            if (!thirdPartyAccess.getAccountSecretKey().trim().equals(targetAccount.getSecretKey().trim())) {
+                throw new Exception("The provided Secret Key does not correspond to the account you selected.");
+            }
+            targetAccount.setBalance(targetAccount.getBalance().increaseAmount(thirdPartyAccess.getAmount()));
+            accountRepository.save(targetAccount);
+
+            TransferenceRegistry record = new TransferenceRegistry(
+                    thirdParties.get(0).getId(),
+                    thirdParties.get(0).getName(),
+                    null,
+                    targetAccount.getId(),
+                    targetAccount.getPrimaryOwner().getName(),
+                    targetAccount.getBalance().getAmount(),
+                    thirdPartyAccess.getAmount());
+
+            transferenceRegistryService.createTransferenceRegistry(record);
+        } else {
+            throw new Exception("We could not find a partner with that Hashed Key.");
+        }
     }
 
 
@@ -97,8 +147,6 @@ public class AccountService {
 
         Account receiverAccount = accountRepository.findById(transference.getReceiverId())
                 .orElseThrow(() -> new Exception("Receiver Account not found."));
-        System.out.println(receiverAccount.getPrimaryOwner().getName());
-        System.out.println(transference.getReceiverName());
         if (!receiverAccount.getPrimaryOwner().getName().trim().equals(transference.getReceiverName().trim())
                 || (receiverAccount.getSecondaryOwner() != null
                         && !receiverAccount.getSecondaryOwner().getName().trim().equals(transference.getReceiverName().trim()))) {
@@ -126,10 +174,10 @@ public class AccountService {
             TransferenceRegistry lastTransference = transferenceList.get(transferenceList.size()-1);
             LocalTime lastTransferenceTime = transferenceList.get(transferenceList.size()-1).getTime();
             if (lastTransference.getSenderAccountName().equals(senderAccount.getPrimaryOwner().getName())
-                    && SECONDS.between(lastTransferenceTime, LocalTime.now()) < 3) {
+                    && SECONDS.between(lastTransferenceTime, LocalTime.now()) < 2) {
                 senderAccount.setStatus(AccountStatus.FROZEN);
                 accountRepository.save(senderAccount);
-                throw new Exception("This account have committed a rule violation trying to make more than two transferences in a 2 seconds lapse and will be blocked." +
+                throw new Exception("This account have committed a rule violation trying to make more than two transferences in a single second lapse and will be blocked." +
                         " Please contact and administrator.");
             }
         }
@@ -142,8 +190,16 @@ public class AccountService {
                         .equals(senderAccount.getPrimaryOwner()
                                 .getName()))
                 .collect(Collectors.toList());
-        List<TransferenceRegistry> transferenceListSender
-        System.out.println(transferenceList);
 
+        List<TransferenceRegistry> transferenceListSenderToday = transferenceListSender.stream().filter(transferenceRegistry ->
+                transferenceRegistry.getDate().isEqual(LocalDate.now())).collect(Collectors.toList());
+
+        if (transferenceListSenderToday.size() > (senderAccount.getMaxTransactions24Hrs() * 1.5)) {
+            senderAccount.setMaxTransactions24Hrs(transferenceListSenderToday.size());
+            senderAccount.setStatus(AccountStatus.FROZEN);
+            accountRepository.save(senderAccount);
+            throw new Exception("This account have committed a rule violation trying to make more transferences than usual and will be blocked. " +
+                    "Please contact and administrator.");
+        }
     }
 }

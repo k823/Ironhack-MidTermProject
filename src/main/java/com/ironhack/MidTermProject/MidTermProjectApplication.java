@@ -14,12 +14,16 @@ import java.io.Reader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+import static org.hibernate.bytecode.BytecodeLogger.LOGGER;
+
+
 @SpringBootApplication
 public class MidTermProjectApplication implements ApplicationRunner {
 	@Autowired
 	private Environment env;
 
 	public static void main(String[] args) {
+		LOGGER.info("[]");
 		SpringApplication.run(MidTermProjectApplication.class, args);
 	}
 

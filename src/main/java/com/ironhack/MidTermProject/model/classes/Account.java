@@ -38,6 +38,8 @@ public abstract class Account {
         this.secretKey = "bananas";
         this.balance = new Money(new BigDecimal(0));
         this.status = AccountStatus.ACTIVE;
+        this.maxTransactions24Hrs = 0;
+        this.maxTransactionsToday = 0;
         this.createdAt = LocalDate.now();
         this.updatedAt = LocalDate.now();
     }
@@ -58,6 +60,8 @@ public abstract class Account {
         this.secretKey = secretKey;
         this.primaryOwner = primaryOwner;
         this.secondaryOwner = secondaryOwner;
+        this.maxTransactions24Hrs = 0;
+        this.maxTransactionsToday = 0;
         this.createdAt = LocalDate.now();
         this.updatedAt = LocalDate.now();
         this.accountType = accountType;

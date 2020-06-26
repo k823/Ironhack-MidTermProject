@@ -1,6 +1,7 @@
 package com.ironhack.MidTermProject.controller.impl.Transferences;
 
 import com.ironhack.MidTermProject.controller.interfaces.Transferences.TransferenceControllerInterface;
+import com.ironhack.MidTermProject.model.dto.ThirdPartyAccess;
 import com.ironhack.MidTermProject.model.dto.Transference;
 import com.ironhack.MidTermProject.model.entities.Transferences.TransferenceRegistry;
 import com.ironhack.MidTermProject.service.Accounts.AccountService;
@@ -34,15 +35,22 @@ public class TransferenceControllerImpl implements TransferenceControllerInterfa
         return transferenceRegistryService.getAll();
     }
 
-    public TransferenceRegistry findById(Long id) {
-        return null;
+    @GetMapping("/find/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public TransferenceRegistry findById(@PathVariable Long id) {
+        return transferenceRegistryService.findById(id);
     }
 
-    public TransferenceRegistry createTransferenceRegistry(TransferenceRegistry transferenceRegistry) {
-        return null;
-    }
-
+    @DeleteMapping("/delete/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTransferenceRegistryById(Long id) {
+        transferenceRegistryService.deleteTransferenceRegistryById(id);
+    }
 
+    // THIRD PARTY
+    @PostMapping("/third-party/new")
+    @ResponseStatus(HttpStatus.OK)
+    public void operateAccount(@RequestHeader("HashedKey") String hashedKey, @RequestBody ThirdPartyAccess thirdPartyAccess) throws Exception {
+        accountService.operateAccount(hashedKey, thirdPartyAccess);
     }
 }
