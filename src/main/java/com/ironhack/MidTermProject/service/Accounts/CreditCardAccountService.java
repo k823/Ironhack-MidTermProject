@@ -60,4 +60,16 @@ public class CreditCardAccountService {
         creditCardAccountRepository.deleteById(id);
     }
 
+//    public void addInterest(Long id) {
+//        CreditCardAccount creditCardAccount =  creditCardAccountRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Could not find that Account."));
+//        LocalDate now = LocalDate.now();
+//        Long diff = Math.abs(MONTHS.between(creditCardAccount.getUpdatedAt(), now));
+//
+//        BigDecimal monthlyInterest = creditCardAccount.getInterestRate().divide(new BigDecimal(12));
+//
+//        if (diff >= 1) {
+//            creditCardAccount.setBalance(creditCardAccount.getBalance().increaseAmount(creditCardAccount.getBalance().getAmount().multiply(new BigDecimal(1).multiply(monthlyInterest))));
+//        }
+//    }
+
 }

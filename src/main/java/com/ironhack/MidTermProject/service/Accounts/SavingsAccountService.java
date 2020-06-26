@@ -63,4 +63,13 @@ public class SavingsAccountService {
     public void deleteById(Long id) {
         savingsAccountRepository.deleteById(id);
     }
+
+//    public void addInterest() {
+//        LocalDate now = LocalDate.now();
+//        Long diff = Math.abs(YEARS.between(this.updatedAt, now));
+//
+//        if (diff == 1) {
+//            this.balance.increaseAmount(getBalance().increaseAmount(balance.getAmount().multiply(interestRate)));
+//        }
+//    }
 }

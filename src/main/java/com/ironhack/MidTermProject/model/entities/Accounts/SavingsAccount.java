@@ -13,10 +13,7 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.util.Objects;
-
-import static java.time.temporal.ChronoUnit.YEARS;
 
 @Entity
 @Table(name = "savings_account")
@@ -64,15 +61,6 @@ public class SavingsAccount extends Account {
 
     public void setInterestRate(BigDecimal interestRate) {
         this.interestRate = interestRate;
-    }
-
-    public void addInterest() {
-        LocalDate now = LocalDate.now();
-        Long diff = Math.abs(YEARS.between(this.updatedAt, now));
-
-        if (diff == 1) {
-            this.balance.increaseAmount(getBalance().increaseAmount(balance.getAmount().multiply(interestRate)));
-        }
     }
 
     @Override

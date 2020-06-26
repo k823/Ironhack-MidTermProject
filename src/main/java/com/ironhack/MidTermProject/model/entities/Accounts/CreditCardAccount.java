@@ -13,10 +13,7 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.util.Objects;
-
-import static java.time.temporal.ChronoUnit.MONTHS;
 
 @Entity
 @Table(name = "credit_card_account")
@@ -65,14 +62,6 @@ public class CreditCardAccount extends Account {
         this.interestRate = interestRate;
     }
 
-    public void addInterest() {
-        LocalDate now = LocalDate.now();
-        Long diff = Math.abs(MONTHS.between(this.updatedAt, now));
-
-        if (diff == 1) {
-            this.balance.increaseAmount(getBalance().increaseAmount(balance.getAmount().multiply(interestRate.divide(new BigDecimal("12")))));
-        }
-    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

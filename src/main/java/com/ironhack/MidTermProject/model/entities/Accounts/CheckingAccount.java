@@ -52,11 +52,6 @@ public class CheckingAccount extends Account {
 
     @Override
     public void setBalance(Money balance) {
-        BigDecimal currentMoney = super.getBalance().getAmount();
-        if (currentMoney.compareTo(this.minimumBalance) == -1) {
-            balance.decreaseAmount(penaltyFee);
-            super.setBalance(balance);
-        }
         super.setBalance(balance);
     }
 
