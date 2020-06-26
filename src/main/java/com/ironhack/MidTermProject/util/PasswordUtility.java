@@ -5,9 +5,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Random;
 
+import static org.hibernate.bytecode.BytecodeLogger.LOGGER;
+
 public class PasswordUtility {
 
     public static String randomPasswordGenerator() {
+        LOGGER.info("GENERATING RANDOM PASSWORD.");
         int leftLimit = 48; // numeral '0'
         int rightLimit = 122; // letter 'z'
         int targetStringLength = 10;
@@ -18,15 +21,14 @@ public class PasswordUtility {
                 .limit(targetStringLength)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
-
-        System.out.println("This is the password: " + generatedString);
         return generatedString;
     }
 
     public static String main() {
+        LOGGER.info("ENCODING PASSWORD.");
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String result = passwordEncoder.encode(randomPasswordGenerator());
-        System.out.println("This is the hashed password: " + result);
+        LOGGER.info("ENCODED PASSWORD IS: " + LOGGER);
         return result;
     }
 }

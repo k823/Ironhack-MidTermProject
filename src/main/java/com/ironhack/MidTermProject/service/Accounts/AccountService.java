@@ -24,6 +24,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.hibernate.bytecode.BytecodeLogger.LOGGER;
+
 import static java.time.temporal.ChronoUnit.SECONDS;
 
 @Service
@@ -60,6 +62,7 @@ public class AccountService {
         User user = userRepository.findByName(name);
 
         if (!encoder.matches(password, user.getPassword())) {
+            LOGGER.error("Password does not match user. " + user.getPassword() + " - " + password);
             throw new Exception("Password does not match user.");
         }
         return accountRepository.findAll()
@@ -70,12 +73,16 @@ public class AccountService {
     public Account findMineId(String auth, Long id) throws Exception {
         List<Account> accountList = findMine(auth);
         List<Account> targetList = accountList.stream().filter(account -> account.getId() == id).collect(Collectors.toList());
-        if (targetList.size() == 0) throw new DataNotFoundException("That account does not belong to this user.");
+        if (targetList.size() == 0) {
+            LOGGER.error("That account does not belong to this user. " + accountList + " - " + id);
+            throw new DataNotFoundException("That account does not belong to this user.");
+        }
         return targetList.get(0);
     }
 
     // FOR ADMINS
     public void setBalance(AccountMoney accountMoney) throws Exception {
+        LOGGER.info("Admin operation started. " + accountMoney);
         Account targetAccount = accountRepository.findById(accountMoney.getAccountId()).orElseThrow(() -> new Exception("Account not found."));
         targetAccount.setBalance(targetAccount.getBalance().increaseAmount(accountMoney.getAmount()));
         accountRepository.save(targetAccount);
@@ -89,13 +96,16 @@ public class AccountService {
                 accountMoney.getAmount());
 
         transferenceRegistryService.createTransferenceRegistry(record);
+        LOGGER.info("Admin operation successfully completed. ");
     }
 
     // FOR THIRD PARTIES
     public void operateAccount(String hashedKey, ThirdPartyAccess thirdPartyAccess) throws Exception {
+        LOGGER.info("ThirdParty operation started. " + thirdPartyAccess);
         if (thirdPartyAccess.getAccountSecretKey() == null
                 || thirdPartyAccess.getAccountId() == null
                 || thirdPartyAccess.getAmount() == null) {
+            LOGGER.error("Fields missing trying to access account from ThirdParty: " + thirdPartyAccess);
             throw new Exception("Please introduce all the required fields: accountId,  amount, accountSecretKey");
         }
         List<ThirdParty> thirdParties = thirdPartyRepository.findByHashedKey(hashedKey);
@@ -103,6 +113,8 @@ public class AccountService {
             Account targetAccount = accountRepository.findById(thirdPartyAccess.getAccountId()).orElseThrow(() -> new Exception("Account not found."));
 
             if (!thirdPartyAccess.getAccountSecretKey().trim().equals(targetAccount.getSecretKey().trim())) {
+                LOGGER.error("The provided Secret Key does not correspond to the account you selected. " +
+                        thirdPartyAccess.getAccountSecretKey() + targetAccount.getSecretKey());
                 throw new Exception("The provided Secret Key does not correspond to the account you selected.");
             }
             targetAccount.setBalance(targetAccount.getBalance().increaseAmount(thirdPartyAccess.getAmount()));
@@ -118,7 +130,9 @@ public class AccountService {
                     thirdPartyAccess.getAmount());
 
             transferenceRegistryService.createTransferenceRegistry(record);
+            LOGGER.info("ThirdParty operation successfully completed. ");
         } else {
+            LOGGER.error("We could not find a partner with that Hashed Key." + hashedKey);
             throw new Exception("We could not find a partner with that Hashed Key.");
         }
     }
@@ -126,16 +140,20 @@ public class AccountService {
 
     @Transactional
     public void makeTransference(String auth, Transference transference) throws Exception {
+        LOGGER.info("Transaction started. " + transference);
         if (transference.getSenderId() == null
                 || transference.getReceiverId() == null
                 || transference.getReceiverName() == null
                 || transference.getAmount() == null) {
+            LOGGER.error("Fields missing trying to access account: " + transference);
             throw new Exception("Please introduce all the required fields: senderId (account), receiverId (account), receiverName, amount");
         }
         Account senderAccount = findMineId(auth, transference.getSenderId());
         if (senderAccount.getStatus().equals(AccountStatus.FROZEN)) {
+            LOGGER.error("Trying to perform operation on frozen account. " + senderAccount);
             throw new Exception("This account is frozen and cannot perform operations. Please contact an administrator.");
         } else if (senderAccount.getBalance().getAmount().compareTo(transference.getAmount()) == -1) {
+            LOGGER.error("Trying to perform an operation with a value greater than the funds in account: " + senderAccount.getBalance() + " - " + transference.getAmount());
             throw new Exception("This account does not have enough funds to complete this transaction.");
         }
 
@@ -150,6 +168,7 @@ public class AccountService {
         if (!receiverAccount.getPrimaryOwner().getName().trim().equals(transference.getReceiverName().trim())
                 || (receiverAccount.getSecondaryOwner() != null
                         && !receiverAccount.getSecondaryOwner().getName().trim().equals(transference.getReceiverName().trim()))) {
+            LOGGER.error("The given Account Id does not match the Account Owner's name. " + receiverAccount + " - " + transference.getReceiverName());
             throw new Exception("The given Account Id does not match the Account Owner's name.");
         }
         receiverAccount.setBalance(receiverAccount.getBalance().increaseAmount(transference.getAmount()));
@@ -165,6 +184,7 @@ public class AccountService {
                 transference.getAmount());
 
         transferenceRegistryService.createTransferenceRegistry(record);
+        LOGGER.info("Transference successfully completed.");
     }
 
     // FRAUD UTILITY
@@ -177,6 +197,7 @@ public class AccountService {
                     && SECONDS.between(lastTransferenceTime, LocalTime.now()) < 2) {
                 senderAccount.setStatus(AccountStatus.FROZEN);
                 accountRepository.save(senderAccount);
+                LOGGER.error("Account blocked due to simultaneous transference policy violation." + senderAccount);
                 throw new Exception("This account have committed a rule violation trying to make more than two transferences in a single second lapse and will be blocked." +
                         " Please contact and administrator.");
             }
@@ -198,6 +219,7 @@ public class AccountService {
             senderAccount.setMaxTransactions24Hrs(transferenceListSenderToday.size());
             senderAccount.setStatus(AccountStatus.FROZEN);
             accountRepository.save(senderAccount);
+            LOGGER.error("Account blocked due to transference limit exceeded violation." + senderAccount);
             throw new Exception("This account have committed a rule violation trying to make more transferences than usual and will be blocked. " +
                     "Please contact and administrator.");
         }

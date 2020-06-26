@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static org.hibernate.bytecode.BytecodeLogger.LOGGER;
+
 @Service
 public class AdminService {
     @Autowired
@@ -23,12 +25,15 @@ public class AdminService {
 
     public Admin createAdmin(Admin admin) throws Exception {
         if (admin.getName() == null) {
+            LOGGER.error("Admin Name must not be null. " + admin.getName());
             throw new Exception("Admin Name must not be null.");
         }
+        LOGGER.info("Admin has been created: " + admin);
         return adminRepository.save(admin);
     }
 
     public void deleteById(Long id) {
+        LOGGER.info("Admin has been deleted by ID: " + id);
         adminRepository.deleteById(id);
     }
 }

@@ -17,8 +17,6 @@ public class CustomSecurityUser extends User implements UserDetails {
         this.setPassword(user.getPassword());
         this.setRole(user.getRole());
         this.setId(user.getId());
-        System.out.println("This is the user: " + user);
-        System.out.println("This is the custom user: " + this);
     }
 
     @Override

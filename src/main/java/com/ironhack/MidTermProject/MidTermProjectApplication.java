@@ -23,7 +23,7 @@ public class MidTermProjectApplication implements ApplicationRunner {
 	private Environment env;
 
 	public static void main(String[] args) {
-		LOGGER.info("[]");
+		LOGGER.info("[APP INIT] - Application started.");
 		SpringApplication.run(MidTermProjectApplication.class, args);
 	}
 

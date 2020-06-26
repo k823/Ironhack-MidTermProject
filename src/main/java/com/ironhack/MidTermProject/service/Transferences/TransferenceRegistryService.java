@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static org.hibernate.bytecode.BytecodeLogger.LOGGER;
+
 @Service
 public class TransferenceRegistryService {
 
@@ -23,10 +25,12 @@ public class TransferenceRegistryService {
     }
 
     public TransferenceRegistry createTransferenceRegistry(TransferenceRegistry transferenceRegistry) {
+        LOGGER.info("Transference registry has been created: " + transferenceRegistry);
         return transferenceRegistryRepository.save(transferenceRegistry);
     }
 
     public void deleteTransferenceRegistryById(Long id) {
+        LOGGER.info("Transference registry has been deleted by ID: " + id);
         transferenceRegistryRepository.deleteById(id);
     }
 }
