@@ -5,6 +5,7 @@ import com.ironhack.MidTermProject.model.classes.Address;
 import com.ironhack.MidTermProject.model.classes.Money;
 import com.ironhack.MidTermProject.model.entities.Accounts.SavingsAccount;
 import com.ironhack.MidTermProject.model.entities.Users.AccountHolder;
+import com.ironhack.MidTermProject.repository.Accounts.SavingsAccountRepository;
 import com.ironhack.MidTermProject.service.Users.AccountHolderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,8 +25,11 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class SavingsAccountServiceTest {
-    @MockBean
+    @Autowired
     SavingsAccountService savingsAccountService;
+
+    @MockBean
+    SavingsAccountRepository savingsAccountRepository;
 
     @MockBean
     AccountHolderService accountHolderService;
@@ -44,11 +48,12 @@ class SavingsAccountServiceTest {
     @BeforeEach
     void setUp() throws Exception {
         accountHolder = new AccountHolder("jorge", "banana", LocalDate.of(1994, 12, 10), new Address("fake123", "springfield", "usa", 9999), null);
-        savingsAccount = new SavingsAccount(new Money(new BigDecimal(100)), "yes", accountHolder, null, null, null);
+        savingsAccount = new SavingsAccount(new Money(new BigDecimal(100)), "yes", accountHolder, null, new BigDecimal(300), new BigDecimal(0.1));
         accounts = Arrays.asList(savingsAccount);
-        when(savingsAccountService.createSavingsAccount(savingsAccount)).thenReturn(savingsAccount);
-        when(savingsAccountService.getAll()).thenReturn(accounts);
-        when(savingsAccountService.findById(savingsAccount.getId())).thenReturn(savingsAccount);
+        when(savingsAccountRepository.save(savingsAccount)).thenReturn(savingsAccount);
+        when(savingsAccountRepository.findAll()).thenReturn(accounts);
+        when(savingsAccountRepository.findById(savingsAccount.getId())).thenReturn(java.util.Optional.ofNullable(savingsAccount));
+        when(accountHolderService.findById(savingsAccount.getId())).thenReturn(accountHolder);
     }
 
     @Test
@@ -69,5 +74,10 @@ class SavingsAccountServiceTest {
     @Test
     void deleteById() {
         savingsAccountService.deleteById(savingsAccount.getId());
+    }
+
+    @Test
+    void addInterest() {
+        savingsAccountService.addInterest(savingsAccount);
     }
 }

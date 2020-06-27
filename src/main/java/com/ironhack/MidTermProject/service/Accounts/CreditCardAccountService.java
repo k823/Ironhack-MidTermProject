@@ -9,7 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.List;
+
+import static java.time.temporal.ChronoUnit.MONTHS;
 
 @Service
 public class CreditCardAccountService {
@@ -23,7 +27,6 @@ public class CreditCardAccountService {
 
     public CreditCardAccount createCreditCardAccount(CreditCardAccount creditCardAccount) {
         AccountHolder accountHolder = accountHolderService.findById(creditCardAccount.getPrimaryOwner().getId());
-
         BigDecimal creditLimit = creditCardAccount.getCreditLimit();
         BigDecimal maxCreditLimit = new BigDecimal("100000");
         BigDecimal interestRate = creditCardAccount.getInterestRate();
@@ -53,23 +56,25 @@ public class CreditCardAccountService {
     }
 
     public CreditCardAccount findById(Long id) {
-        return creditCardAccountRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Could not find that Account."));
+        CreditCardAccount target = creditCardAccountRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Could not find that Account."));
+        addInterest(target);
+        creditCardAccountRepository.save(target);
+        return target;
     }
 
     public void deleteById(Long id) {
         creditCardAccountRepository.deleteById(id);
     }
 
-//    public void addInterest(Long id) {
-//        CreditCardAccount creditCardAccount =  creditCardAccountRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Could not find that Account."));
-//        LocalDate now = LocalDate.now();
-//        Long diff = Math.abs(MONTHS.between(creditCardAccount.getUpdatedAt(), now));
-//
-//        BigDecimal monthlyInterest = creditCardAccount.getInterestRate().divide(new BigDecimal(12));
-//
-//        if (diff >= 1) {
-//            creditCardAccount.setBalance(creditCardAccount.getBalance().increaseAmount(creditCardAccount.getBalance().getAmount().multiply(new BigDecimal(1).multiply(monthlyInterest))));
-//        }
-//    }
+    public void addInterest(CreditCardAccount creditCardAccount) {
+        LocalDate now = LocalDate.now();
+        Long diff = Math.abs(MONTHS.between(creditCardAccount.getUpdatedAt(), now));
+
+        BigDecimal monthlyInterest = creditCardAccount.getInterestRate().divide(new BigDecimal(12), RoundingMode.HALF_DOWN);
+
+        if (diff >= 1) {
+            creditCardAccount.setBalance(creditCardAccount.getBalance().increaseAmount(creditCardAccount.getBalance().getAmount().multiply(new BigDecimal(1).multiply(monthlyInterest))));
+        }
+    }
 
 }

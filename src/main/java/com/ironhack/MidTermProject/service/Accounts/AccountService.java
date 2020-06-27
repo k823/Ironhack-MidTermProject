@@ -60,8 +60,10 @@ public class AccountService {
         String name = b64decoded.substring(0, separator);
         String password = b64decoded.substring(separator+1);
         User user = userRepository.findByName(name);
+        System.out.println(user);
+        System.out.println(name + password);
 
-        if (!encoder.matches(password, user.getPassword())) {
+        if (!encoder.matches(password.trim(), user.getPassword().trim())) {
             LOGGER.error("Password does not match user. " + user.getPassword() + " - " + password);
             throw new Exception("Password does not match user.");
         }
@@ -113,7 +115,7 @@ public class AccountService {
             Account targetAccount = accountRepository.findById(thirdPartyAccess.getAccountId()).orElseThrow(() -> new Exception("Account not found."));
 
             if (!thirdPartyAccess.getAccountSecretKey().trim().equals(targetAccount.getSecretKey().trim())) {
-                LOGGER.error("The provided Secret Key does not correspond to the account you selected. " +
+                LOGGER.error("The provided Secret Key does not correspond to the account you selected." +
                         thirdPartyAccess.getAccountSecretKey() + targetAccount.getSecretKey());
                 throw new Exception("The provided Secret Key does not correspond to the account you selected.");
             }

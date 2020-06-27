@@ -94,7 +94,7 @@ public class CheckingAccount extends Account {
     @Override
     public String toString() {
         return "CheckingAccount{" +
-                ", minimumBalance=" + minimumBalance +
+                "minimumBalance=" + minimumBalance +
                 ", penaltyFee=" + penaltyFee +
                 ", monthlyMaintenanceFee=" + monthlyMaintenanceFee +
                 ", balance=" + balance +

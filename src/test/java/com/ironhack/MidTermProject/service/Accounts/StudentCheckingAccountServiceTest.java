@@ -5,6 +5,7 @@ import com.ironhack.MidTermProject.model.classes.Address;
 import com.ironhack.MidTermProject.model.classes.Money;
 import com.ironhack.MidTermProject.model.entities.Accounts.StudentCheckingAccount;
 import com.ironhack.MidTermProject.model.entities.Users.AccountHolder;
+import com.ironhack.MidTermProject.repository.Accounts.StudentCheckingAccountRepository;
 import com.ironhack.MidTermProject.service.Users.AccountHolderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,8 +25,11 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class StudentCheckingAccountServiceTest {
-    @MockBean
+    @Autowired
     StudentCheckingAccountService studentCheckingAccountService;
+
+    @MockBean
+    StudentCheckingAccountRepository studentCheckingAccountRepository;
 
     @MockBean
     AccountHolderService accountHolderService;
@@ -46,9 +50,10 @@ class StudentCheckingAccountServiceTest {
         accountHolder = new AccountHolder("jorge", "banana", LocalDate.of(1994, 12, 10), new Address("fake123", "springfield", "usa", 9999), null);
         studentCheckingAccount = new StudentCheckingAccount(new Money(new BigDecimal(100)), "yes", accountHolder, null);
         accounts = Arrays.asList(studentCheckingAccount);
-        when(studentCheckingAccountService.createStudentCheckingAccount(studentCheckingAccount)).thenReturn(studentCheckingAccount);
-        when(studentCheckingAccountService.getAll()).thenReturn(accounts);
-        when(studentCheckingAccountService.findById(studentCheckingAccount.getId())).thenReturn(studentCheckingAccount);
+        when(studentCheckingAccountRepository.save(studentCheckingAccount)).thenReturn(studentCheckingAccount);
+        when(studentCheckingAccountRepository.findAll()).thenReturn(accounts);
+        when(studentCheckingAccountRepository.findById(studentCheckingAccount.getId())).thenReturn(java.util.Optional.ofNullable(studentCheckingAccount));
+        when(accountHolderService.findById(studentCheckingAccount.getId())).thenReturn(accountHolder);
     }
 
     @Test

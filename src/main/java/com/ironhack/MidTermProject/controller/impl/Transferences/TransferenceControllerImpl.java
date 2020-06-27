@@ -6,12 +6,14 @@ import com.ironhack.MidTermProject.model.dto.Transference;
 import com.ironhack.MidTermProject.model.entities.Transferences.TransferenceRegistry;
 import com.ironhack.MidTermProject.service.Accounts.AccountService;
 import com.ironhack.MidTermProject.service.Transferences.TransferenceRegistryService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Api(tags = "Transference - Transference Controller")
 @RestController
 @RequestMapping("/transference")
 public class TransferenceControllerImpl implements TransferenceControllerInterface {
@@ -29,7 +31,7 @@ public class TransferenceControllerImpl implements TransferenceControllerInterfa
          accountService.makeTransference(auth, transference);
     }
 
-    @GetMapping("/all")
+    @GetMapping("/find/all")
     @ResponseStatus(HttpStatus.OK)
     public List<TransferenceRegistry> getAll() {
         return transferenceRegistryService.getAll();
@@ -49,7 +51,7 @@ public class TransferenceControllerImpl implements TransferenceControllerInterfa
 
     // THIRD PARTY
     @PostMapping("/third-party/new")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public void operateAccount(@RequestHeader("HashedKey") String hashedKey, @RequestBody ThirdPartyAccess thirdPartyAccess) throws Exception {
         accountService.operateAccount(hashedKey, thirdPartyAccess);
     }

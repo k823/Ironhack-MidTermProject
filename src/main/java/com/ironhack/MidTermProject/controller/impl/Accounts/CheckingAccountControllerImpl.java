@@ -3,38 +3,40 @@ package com.ironhack.MidTermProject.controller.impl.Accounts;
 import com.ironhack.MidTermProject.controller.interfaces.Accounts.CheckingAccountControllerInterface;
 import com.ironhack.MidTermProject.model.entities.Accounts.CheckingAccount;
 import com.ironhack.MidTermProject.service.Accounts.CheckingAccountService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Api(tags = "Accounts - CheckingAccount Controller")
 @RestController
-@RequestMapping("/")
+@RequestMapping("/accounts/checking")
 public class CheckingAccountControllerImpl implements CheckingAccountControllerInterface {
 
     @Autowired
     CheckingAccountService checkingAccountService;
 
-    @PostMapping("/checking-account")
+    @PostMapping("/new")
     @ResponseStatus(HttpStatus.CREATED)
     public Object createCheckingAccount(@RequestBody CheckingAccount checkingAccount) {
         return checkingAccountService.checkAccountType(checkingAccount);
     }
 
-    @GetMapping("/checking-accounts")
+    @GetMapping("/find/all")
     @ResponseStatus(HttpStatus.OK)
     public List<CheckingAccount> getAll() {
         return checkingAccountService.getAll();
     }
 
-    @GetMapping("/checking-account/{id}")
+    @GetMapping("/find/{id}")
     @ResponseStatus(HttpStatus.OK)
     public CheckingAccount findById(@PathVariable Long id) {
         return checkingAccountService.findById(id);
     }
 
-    @DeleteMapping("/checking-account/{id}")
+    @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable Long id) {
         checkingAccountService.deleteById(id);

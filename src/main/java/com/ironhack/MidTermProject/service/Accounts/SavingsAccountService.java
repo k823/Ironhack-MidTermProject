@@ -10,7 +10,10 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.List;
+
+import static java.time.temporal.ChronoUnit.YEARS;
 
 @Service
 public class SavingsAccountService {
@@ -22,8 +25,9 @@ public class SavingsAccountService {
     AccountHolderService accountHolderService;
 
     public SavingsAccount createSavingsAccount(SavingsAccount savingsAccount) throws Exception {
+        System.out.println("start");
         AccountHolder accountHolder = accountHolderService.findById(savingsAccount.getPrimaryOwner().getId());
-
+        System.out.println(accountHolder);
         BigDecimal interestRate = savingsAccount.getInterestRate();
         BigDecimal maxInterestRate = new BigDecimal("0.5");
         BigDecimal minimumBalance = savingsAccount.getMinimumBalance();
@@ -57,19 +61,22 @@ public class SavingsAccountService {
     }
 
     public SavingsAccount findById(Long id) {
-        return savingsAccountRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Could not find that Account."));
+        SavingsAccount target =  savingsAccountRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Could not find that Account."));
+        addInterest(target);
+        savingsAccountRepository.save(target);
+        return target;
     }
 
     public void deleteById(Long id) {
         savingsAccountRepository.deleteById(id);
     }
 
-//    public void addInterest() {
-//        LocalDate now = LocalDate.now();
-//        Long diff = Math.abs(YEARS.between(this.updatedAt, now));
-//
-//        if (diff == 1) {
-//            this.balance.increaseAmount(getBalance().increaseAmount(balance.getAmount().multiply(interestRate)));
-//        }
-//    }
+    public void addInterest(SavingsAccount savingsAccount) {
+        LocalDate now = LocalDate.now();
+        Long diff = Math.abs(YEARS.between(savingsAccount.getUpdatedAt(), now));
+
+        if (diff == 1) {
+            savingsAccount.getBalance().increaseAmount(savingsAccount.getBalance().increaseAmount(savingsAccount.getBalance().getAmount().multiply(savingsAccount.getInterestRate())));
+        }
+    }
 }
