@@ -43,7 +43,7 @@ public class AccountControllerImpl implements AccountControllerInterface {
     }
 
     @PostMapping("/balance")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public void setBalance(@RequestBody AccountMoney accountMoney) throws Exception {
          accountService.setBalance(accountMoney);
     }

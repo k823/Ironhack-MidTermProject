@@ -18,7 +18,7 @@ public class CreditCardAccountControllerImpl implements CreditCardAccountControl
     @Autowired
     CreditCardAccountService creditCardAccountService;
 
-    @PostMapping("/new")
+    @PostMapping(value = "/new")
     @ResponseStatus(HttpStatus.CREATED)
     public CreditCardAccount createCreditCardAccount(@RequestBody CreditCardAccount creditCardAccount) {
         return creditCardAccountService.createCreditCardAccount(creditCardAccount);

@@ -1,6 +1,7 @@
 package com.ironhack.MidTermProject.controller.impl.Accounts;
 
 import com.ironhack.MidTermProject.controller.interfaces.Accounts.CheckingAccountControllerInterface;
+import com.ironhack.MidTermProject.model.dto.CheckingAccountDto;
 import com.ironhack.MidTermProject.model.entities.Accounts.CheckingAccount;
 import com.ironhack.MidTermProject.service.Accounts.CheckingAccountService;
 import io.swagger.annotations.Api;
@@ -20,8 +21,8 @@ public class CheckingAccountControllerImpl implements CheckingAccountControllerI
 
     @PostMapping("/new")
     @ResponseStatus(HttpStatus.CREATED)
-    public Object createCheckingAccount(@RequestBody CheckingAccount checkingAccount) {
-        return checkingAccountService.checkAccountType(checkingAccount);
+    public Object createCheckingAccount(@RequestBody CheckingAccountDto checkingAccountDto) throws Exception {
+        return checkingAccountService.checkAccountType(checkingAccountDto);
     }
 
     @GetMapping("/find/all")

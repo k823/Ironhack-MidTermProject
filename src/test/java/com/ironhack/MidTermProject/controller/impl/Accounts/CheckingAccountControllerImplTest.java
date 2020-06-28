@@ -3,6 +3,7 @@ package com.ironhack.MidTermProject.controller.impl.Accounts;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ironhack.MidTermProject.model.classes.Address;
 import com.ironhack.MidTermProject.model.classes.Money;
+import com.ironhack.MidTermProject.model.dto.CheckingAccountDto;
 import com.ironhack.MidTermProject.model.entities.Accounts.CheckingAccount;
 import com.ironhack.MidTermProject.model.entities.Accounts.StudentCheckingAccount;
 import com.ironhack.MidTermProject.model.entities.Users.AccountHolder;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -48,6 +50,7 @@ class CheckingAccountControllerImplTest {
 
     AccountHolder accountHolder;
     CheckingAccount checkingAccount;
+    CheckingAccountDto checkingAccountDto;
     StudentCheckingAccount studentCheckingAccount;
     List<CheckingAccount> accounts;
 
@@ -58,6 +61,7 @@ class CheckingAccountControllerImplTest {
         accountHolder = new AccountHolder("jorge", "banana", LocalDate.of(1994, 12, 10), new Address("fake123", "springfield", "usa", 9999), null);
         checkingAccount = new CheckingAccount(new Money(new BigDecimal(100)), "yes", accountHolder, null);
         checkingAccount.setCreatedAt(LocalDate.now());
+        checkingAccountDto = new CheckingAccountDto(accountHolder.getId(), new BigDecimal(100), "yes");
         studentCheckingAccount = new StudentCheckingAccount(new Money(new BigDecimal(100)), "yes", accountHolder, null);
         accounts = Arrays.asList(checkingAccount);
         when(checkingAccountService.createCheckingAccount(checkingAccount)).thenReturn(checkingAccount);
@@ -67,14 +71,14 @@ class CheckingAccountControllerImplTest {
         when(accountHolderRepository.findById(checkingAccount.getId())).thenReturn(java.util.Optional.ofNullable(accountHolder));
     }
 
-//    @Test
-//    void createCheckingAccount() throws Exception {
-//        mockMvc.perform(MockMvcRequestBuilders.post("/accounts/checking/new")
-//                .header("Authorization", "am9yZ2U6YmFuYW5h")
-//                .content(objectMapper.writeValueAsString(checkingAccount))
-//                .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isCreated());
-//    }
+    @Test
+    void createCheckingAccount() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/accounts/checking/new")
+                .header("Authorization", "am9yZ2U6YmFuYW5h")
+                .content(objectMapper.writeValueAsString(checkingAccountDto))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+    }
 
     @Test
     void getAll() throws Exception {

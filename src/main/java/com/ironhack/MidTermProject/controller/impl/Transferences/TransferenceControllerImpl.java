@@ -45,7 +45,7 @@ public class TransferenceControllerImpl implements TransferenceControllerInterfa
 
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteTransferenceRegistryById(Long id) {
+    public void deleteTransferenceRegistryById(@PathVariable Long id) {
         transferenceRegistryService.deleteTransferenceRegistryById(id);
     }
 

@@ -1,11 +1,14 @@
 package com.ironhack.MidTermProject.service.Accounts;
 
 import com.ironhack.MidTermProject.exception.DataNotFoundException;
+import com.ironhack.MidTermProject.model.classes.Money;
+import com.ironhack.MidTermProject.model.dto.CheckingAccountDto;
 import com.ironhack.MidTermProject.model.entities.Accounts.CheckingAccount;
 import com.ironhack.MidTermProject.model.entities.Accounts.StudentCheckingAccount;
 import com.ironhack.MidTermProject.model.entities.Users.AccountHolder;
 import com.ironhack.MidTermProject.repository.Accounts.CheckingAccountRepository;
 import com.ironhack.MidTermProject.service.Users.AccountHolderService;
+import com.ironhack.MidTermProject.util.PasswordUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,20 +29,30 @@ public class CheckingAccountService {
     @Autowired
     AccountHolderService accountHolderService;
 
+    PasswordUtility passwordUtility = new PasswordUtility();
+
     public CheckingAccount createCheckingAccount(CheckingAccount checkingAccount) {
         return checkingAccountRepository.save(checkingAccount);
     }
 
-    public Object checkAccountType(CheckingAccount checkingAccount) {
-        AccountHolder accountHolder = accountHolderService.findById(checkingAccount.getPrimaryOwner().getId());
+    public Object checkAccountType(CheckingAccountDto checkingAccountDto) throws Exception {
+        if (checkingAccountDto.getAccountHolderId() == null
+                || checkingAccountDto.getBalance() == null ) {
+            throw new Exception("Please introduce the accountHolderId and balance.");
+        } else if (checkingAccountDto.getSecretKey() == null) {
+            checkingAccountDto.setSecretKey(passwordUtility.main());
+        }
+        try {
+            AccountHolder accountHolder = accountHolderService.findById(checkingAccountDto.getAccountHolderId());
+
         Long primaryOwnerAge = checkAge(accountHolder.getBirthDate());
 
         if (primaryOwnerAge < 24) {
             StudentCheckingAccount studentCheckingAccount = new StudentCheckingAccount(
-                    checkingAccount.getBalance(),
-                    checkingAccount.getSecretKey(),
+                    new Money(checkingAccountDto.getBalance()),
+                    checkingAccountDto.getSecretKey(),
                     accountHolder,
-                    checkingAccount.getSecondaryOwner()
+                    null
             );
 
             System.out.println("An Student Account will be created.");
@@ -47,11 +60,15 @@ public class CheckingAccountService {
         } else {
             System.out.println("A Checking Account will be created.");
             return createCheckingAccount(new CheckingAccount(
-                    checkingAccount.getBalance(),
-                    checkingAccount.getSecretKey(),
+                    new Money(checkingAccountDto.getBalance()),
+                    checkingAccountDto.getSecretKey(),
                     accountHolder,
-                    checkingAccount.getSecondaryOwner()
+                    null
             ));
+        }
+
+        } catch (Exception e) {
+                throw new Exception("Please introduce a valid AccountHolder");
         }
     }
 

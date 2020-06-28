@@ -107,6 +107,6 @@ class AccountControllerImplTest {
                 .header("Authorization", "am9yZ2U6YmFuYW5h")
                 .content(objectMapper.writeValueAsString(accountMoney))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 }
