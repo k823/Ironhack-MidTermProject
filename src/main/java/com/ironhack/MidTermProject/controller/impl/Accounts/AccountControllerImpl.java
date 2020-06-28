@@ -13,7 +13,7 @@ import java.util.List;
 
 @Api(tags = "Accounts - General Account Controller")
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping("/api")
 public class AccountControllerImpl implements AccountControllerInterface {
     @Autowired
     AccountService accountService;
