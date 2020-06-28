@@ -14,7 +14,7 @@
 
 ## <a name="requirements"></a>Requirements and Instrucitons
 
-######Requirements
+###### Requirements
 The system must have 4 types of accounts: StudentChecking, Checking, Savings, and CreditCard
 
 Checking
@@ -150,9 +150,8 @@ Good Practices
 ## <a name="methodology"></a>Methodology
 For simplicity purpose, a SQL-Generated Entity-Relationship Diagram 
 will be displayed to see the relations of the tables and different Entities.
-<p align="center">
-<img width="680" height="2000" src="https://ibb.co/84F2sk5">
-</p>
+
+<a href="https://ibb.co/84F2sk5"><img src="https://i.ibb.co/HpmY4Zz/Captura-de-pantalla-de-2020-06-28-15-31-16.png" alt="Captura-de-pantalla-de-2020-06-28-15-31-16" border="0" /></a></p>
 
 ## <a name="tools"></a>Tools
 - IntelliJ (Compile and run Java Program, JDK 11)
@@ -171,9 +170,7 @@ To correctly get the Application up and running, please follow the following ste
 3. Go into your MySQL Workbench and type the following commands ```CREATE SCHEMA mid_term_project```, ```CREATE SCHEMA mid_term_project_test```, 
 and run the SQL file to create the databases in your machine.
 
-<p align="center">
-  <img width="300" height="300" src="https://ibb.co/D8T4qVV">
-</p>
+<a href="https://ibb.co/D8T4qVV"><img src="https://i.ibb.co/BrFL1zz/Captura-de-pantalla-de-2020-06-28-16-03-42.png" alt="Captura-de-pantalla-de-2020-06-28-16-03-42" border="0" /></a>
 
 4. Type the command ```mvn spring-boot:run``` in the terminal of your IntelliJ, as the application runs, 
 several entities will be pre-charged for you so you can focus on enjoying the application.
@@ -191,15 +188,14 @@ Just clicking the button below Postman should open and configure everything auto
 To run the tests with Postman, please run the project from the terminal typing: "mvn spring-boot:run" and then
 click the button "Runner" as shown below: 
 
-<img width="200" height="100" src="https://ibb.co/8BqRQq9">
+<a href="https://imgbb.com/"><img src="https://i.ibb.co/26xLpxd/Captura-de-pantalla-de-2020-06-28-15-46-43.png" alt="Captura-de-pantalla-de-2020-06-28-15-46-43" border="0" /></a>
 
 Next step is selecting the "Banking System" collection and set the enviroment on 
 "IronHack-Santander-MidTermProject".
 
 Ultimately press "Start Run" and enjoy the green field of positive results.
 
-<img width="200" height="300" src="https://ibb.co/5htyk5h">
-
+<a href="https://imgbb.com/"><img src="https://i.ibb.co/hFhjcKF/Captura-de-pantalla-de-2020-06-28-15-49-08.png" alt="Captura-de-pantalla-de-2020-06-28-15-49-08" border="0" /></a>
 
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/9c67cbceeb4dfe0ca3cf)
@@ -208,8 +204,7 @@ Ultimately press "Start Run" and enjoy the green field of positive results.
 
 ## <a name="test-coverage"></a>Test Coverage
 
-<img width="400" height="400" src="https://ibb.co/0jcWpFk">
-
+<a href="https://ibb.co/0jcWpFk"><img src="https://i.ibb.co/MDsjyGb/Captura-de-pantalla-de-2020-06-28-15-00-25.png" alt="Captura-de-pantalla-de-2020-06-28-15-00-25" border="0" /></a>
 The test coverage with unit and integration tests is <strong>100%</strong> in Classes. 
 And <strong>avobe 90%</strong> for Methods and Lines. 
 There's a small chance of some tests failing when running the whole application, it that happens,
